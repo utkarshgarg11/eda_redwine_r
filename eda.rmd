@@ -1,0 +1,537 @@
+---
+title: "Exploring Red Wine Data"
+author: "Utkarsh Garg"
+date: "26 March 2017"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FALSE)
+```
+```{r}
+redwine <- read.csv("C:/Users/ADMIN/Downloads/wineQualityReds.csv")
+```
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+redwine$total.acidity <- redwine$fixed.acidity + 
+                         redwine$volatile.acidity +
+                         redwine$citric.acid
+```
+## Univariate Plots
+
+**Note:** The mean of the variable is shown with a red dotted line for each variable.
+
+```{r}
+# This function will provide the basic plot for univariate analysis for each variable.
+base_plot <- function(column){
+  ggplot(redwine, 
+         aes_string(x = column)) + 
+        geom_bar()
+}
+```
+
+```{r}
+# Used for drawing a red dotted vertical line at the mean of the variable
+mean_line <- function(x){
+  geom_vline(aes_string(xintercept = mean(x)), 
+             linetype = 8, 
+             color = "red")
+}
+```
+
+### Volatile Acidity
+```{r}
+base_plot("volatile.acidity") + 
+  mean_line(redwine$volatile.acidity) +  
+  scale_x_continuous(breaks = seq(0.1, 1.6,0.1))
+```
+```{r}
+summary(redwine$volatile.acidity)
+```
+
+There is a wide gap between the maximum value observed i.e. 1.58 and the second to maximum value observed, which is 1.33.
+
+### Fixed Acidity
+```{r}
+base_plot("fixed.acidity") + 
+  mean_line(redwine$fixed.acidity) + 
+  scale_x_continuous(breaks = seq(4,16,1))
+```
+```{r}
+summary(redwine$fixed.acidity)
+```
+
+### Citric Acid
+```{r}
+base_plot("citric.acid") + 
+  mean_line(redwine$citric.acid) + 
+  scale_x_continuous(breaks = seq(0.00,1.00,0.1))
+```
+```{r}
+summary(redwine$citric.acid)
+```
+
+There is a high number of 0.0 values for citric acid, which could be due to absence of data or it may show a real characteristic property of the wines. Another such value is 0.49.
+In addition, there is an **outlier** at 1.0.
+
+### Residual Sugar
+```{r}
+base_plot("residual.sugar") + 
+  mean_line(redwine$residual.sugar) + 
+  scale_x_continuous(breaks = seq(0,16,1))
+```
+```{r}
+summary(redwine$residual.sugar)
+```
+
+The residual sugar of the wines shows significant occurences from 1.0 to 3.5, which continues till 9.0 with lower presence. After that, the values are dispersed around 11.0, 13..0, 14.0 and 15.5 with minimal occurences.
+
+### Chlorides
+```{r}
+base_plot("chlorides") + 
+  mean_line(redwine$chlorides) + 
+  scale_x_continuous(breaks = seq(0,0.6,0.1))
+```
+```{r}
+summary(redwine$chlorides)
+```
+
+The  chlorides' values are clustered around 0.03 and 0.13 with a somewhat **normal** distribution. After that the values are dispersed with an extreme maximum value of 0.611. 
+ 
+### Free Sulphur Dioxide
+```{r}
+base_plot("free.sulfur.dioxide") + 
+  mean_line(redwine$free.sulfur.dioxide) + 
+  scale_x_continuous(breaks = seq(0,75,5))
+```
+```{r}
+summary(redwine$free.sulfur.dioxide)
+```
+
+The counts increase from 3.0 to 5.0. AFter that there is a gradual decrease till 55.0, after which values are dispersed between 61 and 73 with minimal occurence.
+
+### Total Sulphur Dioxide
+```{r}
+base_plot("total.sulfur.dioxide") + 
+  mean_line(redwine$total.sulfur.dioxide) + 
+  scale_x_continuous(breaks = seq(0,300,25))
+```
+```{r}
+summary(redwine$total.sulfur.dioxide)
+```
+
+Two extreme values are present between 275.0 and 289.0.
+
+### Density
+```{r}
+base_plot("density") + 
+  mean_line(redwine$density) + 
+  scale_x_continuous(breaks = seq(0.990,1.005,0.001))
+```
+```{r}
+summary(redwine$density)
+```
+
+### pH
+```{r}
+base_plot("pH") + 
+  mean_line(redwine$pH) + 
+  scale_x_continuous(breaks = seq(2.5,4.0,0.1))
+```
+```{r}
+summary(redwine$pH)
+```
+
+pH seems to be normally distributed with extreme values at either side, the minimum at 2.74 and the maximum at 4.01
+
+### Sulphates
+```{r}
+base_plot("sulphates") + 
+  mean_line(redwine$sulphates) + 
+  scale_x_continuous(breaks = seq(0,2,0.1))
+```
+```{r}
+summary(redwine$sulphates)
+```
+
+Sulpahtes seem to be normally distributed from 0.3 to 1.3. Small, dispersed clusters are found around 1.6 and 2.0.
+
+### Alcohol
+```{r}
+base_plot("alcohol") + 
+  mean_line(redwine$alcohol) + 
+  scale_x_continuous(breaks = seq(6,15,1))
+```
+```{r}
+summary(redwine$alcohol)
+```
+
+### Quality
+```{r}
+redwine$quality <- as.factor(redwine$quality)
+base_plot("quality")
+```
+```{r}
+summary(redwine$quality)
+```
+A large number of wines were of quality *5* and *6* with counts of **681** and **638** respectively. Wines of quality *3* and *8* were present in minimum numbers, **10** and **18** respectively.
+
+## Univariate Analysis
+
+### What is the structure of your dataset?
+
+Output vaiable:
+
+* **quality** : Categorical with values:
+1, 2, 3, 4, 5, 6, 7, 8
+(worst)--------->(best)
+
+Input variables:
+
+* **fixed.acidity**(tartaric acid): Numeric with range [4.6, 15.9] g/dm^3
+* **volatile.acidity**(acetic acid): Numeric with range [0.12, 1.58] g/dm^3
+* **pH**: Numeric with range [2.74, 4.01] units
+* **free.sulfur.dioxide**: Integer with range [1, 72] mg/dm^3
+* **total.sulfur.dioxide**: Integer with range [6, 289] mg/dm^3
+* **chlorides**: Numeric with range [0.012, 0.611] g/dm^3
+* **citric.acid**: Numeric with range [0.00, 1.00] g/dm^3
+* **residual.sugar**: Numeric with range [0.90, 15.50] g/dm^3
+* **density**: Numeric with range [0.9901, 1.0040] g/dm^3
+* **alcohol**: Numeric with range [8.40, 14.90] % by volume
+
+Other observations:
+
+* Most wines are of quality **5** and **6**
+* Very few wines have quality **3** and **8**
+* 75 % of wines have chlorides below 0.09 g/dm^3
+* One wine had a very low pH value of 2.74
+* One wine had a relatively extremely high chloride value of 0.611 g/dm^3
+* One wine each had relatively extremely high total.sulfur.dioxide values of 278 mg/dm^3 and 289 mg/dm^3 in which 50 % values are below 38 mg/dm^3 and 75 % values are below 62 mg/dm^3.
+* A significantly high number of the wines have 0.0 g/dm^3 of citric acid. 
+
+
+### What is/are the main feature(s) of your interest?
+
+The main feature of interest is **quality**. A strong predictive model can be created with the quality as the target variable.
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+
+**sulphates**, **citric.acid** and **volatile.acidity** can play a major role in determining the quaity of the wines.
+
+### Did you create any new variables from existing variables in the dataset? 
+
+I created a variable **total.acidity** which is the sum of fixed.acidity, volatile.acidity and citric.acid. This represents the total amount of acids present in the wine.
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+
+**citric.acid** had unusually high number for values 0.0 and 0.49, and an isolated observation at 1.0.
+High number of wines had quality **5** and **6** and very few had quality **3** and **8**.
+No operations were performed to tidy, adjust or change the form of data. Scaling of the data was done when exploring through graphs.
+
+## Bivariate Plots
+
+### Free Sulfur Dioxide and Total Sulfur Dioxide:
+```{r}
+ggplot(redwine, 
+       aes(x = free.sulfur.dioxide, 
+           y = total.sulfur.dioxide)) + 
+      geom_point(alpha = 0.2) + 
+      geom_smooth(se = FALSE)
+```
+
+There appears to be a positive correlation between total sulfur dioxide and free sulfur dioxide. 
+
+### Fixed Acidity and Citric Acid
+```{r}
+ggplot(redwine, 
+       aes(x = fixed.acidity, 
+           y = citric.acid)) + 
+      geom_jitter(alpha = 0.2) + 
+      geom_smooth(se = FALSE) + 
+      scale_x_continuous(breaks = seq(4,16,1))
+```
+
+There is a strong linear relationship between from fixed acidity value of 7.0 to 11.0.
+
+### Fixed Acidity and pH
+```{r}
+ggplot(redwine, 
+       aes(x = fixed.acidity,  y = pH)) + 
+      geom_point() + 
+      geom_smooth()
+```
+
+There is a negative correlation between the fixed acidity and the pH.
+
+### Residual sugar and quality
+```{r}
+ggplot(redwine,
+       aes(x = quality,
+           y = residual.sugar)) + 
+      geom_boxplot() +
+      scale_y_log10(breaks = c(1,2,5,10))
+```
+
+```{r}
+by(redwine$residual.sugar, redwine$quality, summary)
+```
+
+There doesn't appear to be any relation between the residual sugar and quality.
+
+### Quality and Free sulphur dioxide
+```{r}
+ggplot(redwine,
+       aes(x = quality,
+           y = free.sulfur.dioxide)) +
+      geom_boxplot()
+```
+
+```{r}
+by(redwine$free.sulfur.dioxide, redwine$quality, summary)
+```
+
+High values of free.sulfur.dioxide have middle levels of quality
+
+### Quality and total sulphur dioxide
+```{r}
+ggplot(redwine,
+       aes(x = quality,
+           y = total.sulfur.dioxide)) +
+      geom_boxplot()
+```
+```{r}
+by(redwine$total.sulfur.dioxide, redwine$quality, summary)
+```
+
+High values of total.sulfur.dioxide have middle levels of quality.
+
+
+### Quality and Sulphates
+```{r}
+ggplot(redwine, 
+       aes(x = quality, 
+           y = sulphates)) + 
+      geom_boxplot()
+```
+```{r}
+by(redwine$sulphates, redwine$quality, summary)
+```
+
+Quality increases with amount of sulphates.
+
+### Quality and Citric Acid
+```{r}
+ggplot(redwine, 
+       aes(x = quality, 
+           y = citric.acid)) + 
+      geom_boxplot()
+```
+```{r}
+by(redwine$citric.acid, redwine$quality, summary)
+```
+
+Quality increases with amount of citric acid.
+
+### Quality and Volatile acidity
+```{r}
+ggplot(redwine,
+       aes(x = quality,
+           y = volatile.acidity)) +
+      geom_boxplot()
+```
+```{r}
+by(redwine$volatile.acidity, redwine$quality, summary)
+```
+
+Quality decreases with amount of volatile acidity.
+
+### Density and pH
+```{r}
+ggplot(redwine, 
+       aes(x = density, 
+           y = pH)) + 
+      geom_point() + 
+      geom_smooth()
+```
+
+pH decreases with density.
+
+### Density and Chlorides
+```{r}
+ggplot(redwine, 
+       aes(x = density, 
+           y = chlorides)) + 
+      geom_point(alpha = 0.2) + 
+      scale_y_log10(breaks = c(0.01, 0.02, 0.05, 0.10, 0.2, 0.4)) + 
+      geom_smooth()
+```
+
+Density increases with chlorides.
+
+### Residual sugar and density
+Residual sugar has been log transformed with base 10.
+```{r}
+ggplot(redwine,
+       aes(x = density,
+           y = residual.sugar)) +
+      geom_point(alpha = 0.2) + 
+      geom_smooth() +
+      scale_y_log10(breaks = c(1,2,5,10))
+```
+
+Density increases with residual sugar.
+
+## Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the features of interest vary with other features in the dataset?
+
+The quality of the wine insreases with the amont of sulphates and citric acid, whereas it decreases with the amount of volatile acidity.
+pH decreases with the amount of fixed acidity and density.
+Density increases with the amount of chlorides and residual sugar.
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+High amounts of Total sulphir dioxide and free sulphur dioxide correspond with quality levels **5** and **6** which are middle levels. Low amounts of total and free sulphur dioxide correspond with quality levels **3**, **4** which are low quality levels, and levels **7** and **8**, which are high quality levels.
+This is an interesting phenomenon.
+There is a positive correlation between chlorides and density.
+
+### What was the strongest relationship you found?
+
+The strongest relationship I found was between citric acid and quality. The quality increased with increase in the amount of citric acid.
+
+
+## Multivariate Plots
+
+### Citric Acid, Fixed acidity and Quality
+```{r}
+ggplot(redwine, 
+       aes(x = citric.acid,  
+           y = fixed.acidity, 
+           col = quality)) + 
+      geom_smooth(se = FALSE) + 
+      scale_color_brewer() +
+      theme_dark()
+```
+
+### Fixed Acidity, pH and Quality
+```{r}
+ggplot(redwine, 
+       aes(x = fixed.acidity,  
+           y = pH, 
+           col = quality)) + 
+      geom_smooth(se = FALSE) + 
+      scale_color_brewer() +
+      theme_dark()
+```
+
+### Total Sulfur Dioxide, Free Sulfur Dioxide and Quality
+```{r}
+ggplot(redwine, 
+       aes(x = total.sulfur.dioxide, 
+           y = free.sulfur.dioxide, 
+           col = quality)) + 
+      geom_smooth(se = F) + 
+      scale_color_brewer() +
+      theme_dark()
+```
+
+## Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your features of interest?
+
+The pH, apart from having a strongly negative correlation with citric acid appears to have an effect on the quality. High quality wines seem to have a low pH, as the curve for high quality levels move below those of low quality with pH on the y-axis.
+There is a strongly positive correlation between free sulphur dioxide and total sulphur dioxide. The awkward trend observed in bivariate plots between sulphur dioxides and quality continues to show here.
+
+### Were there any interesting or surprising interactions between features?
+
+pH decreased sharply with fixed acidity which is in accordance with the scientific fact that pH decreases with the amount of acidity.
+
+
+## Final Plots and Summary
+
+### Plot One
+```{r}
+ggplot(redwine,
+       aes(x = citric.acid)) +
+      geom_bar(fill = "blue") + 
+      xlab("Citric Acid ( in g/dm^3)") +
+      ylab("Frequency") +
+      ggtitle("Frequency distribution by Citric Acid") +
+      theme_bw()
+```
+
+### Description One
+```{r results = "hide"}
+sum(redwine$citric.acid == 0)
+sum(redwine$citric.acid == 0.49)
+```
+
+There are very high instances of wines with citric acid 0.0 g/dm^3 and 0.49 g/dm^3.
+132 instances of 0.0 g/dm^3 and 68 instances of 0.49 g/dm^3.
+There is an isolated value of 1.0 g/dm^3.
+
+### Plot Two
+```{r}
+ggplot(redwine,
+       aes(x = fixed.acidity,
+           y = pH)) +
+      geom_point(col = "green", alpha = 0.2) +
+      geom_smooth(col = "red", se = F) +
+      scale_x_continuous(breaks = seq(4,16,1)) +
+      scale_y_continuous(breaks = seq(2.5, 4.0, 0.25)) +
+      xlab("Fixed Acidity | Tartaric Acid (in g/dm^3)") +
+      ylab("pH") +
+      ggtitle("pH by Fixed Acidity (Tartaric Acid) ") +
+      theme_bw()
+      
+```
+
+### Description Two
+
+The pH decreases with the amount of fixed acidity. This is in accordance with the scientific fact that more acidic substances have lower pH.
+
+### Plot Three
+```{r}
+ggplot(redwine,
+       aes(y = volatile.acidity,
+           x = quality)) +
+      geom_boxplot(fill = "yellow") +
+      ylab("Volatile Acidity | Acetic Acid (in g/dm^3)") +
+      xlab("Quality (Low to High) ") +
+      ggtitle("Quality by Volatile Acidity (Acetic Acid) ") +
+      theme_bw()
+```
+
+### Description Three
+
+Volatile acidity has a negative effect on quality i.e. the quality decreases with increase in volatile acidity(acetic acid).
+This may be due to the fact that acetic acid has a pungent smell and more acetic acid leads to increase in pungent smell, which leads to thw wine being evaluated as of low quality.
+
+## Reflections
+
+I started with exploring the individual variables. I was surprised that outliers were present in the positive direction for variables such as **citric.acid**, **fixed.acidity**, **free.sulphur.dioxide**, **total.sulfur.dioxide**, **sulphates**, **chlorides**, **residual.sugar**.
+High number of observations had quality **5** and **6** in the dataset, the case being opposite for levels **3** and **8**
+
+I faced difficulty in establishing relationship of **total.sulfur.dioxide** and **free.sulfur.dioxide** with **quality**. Both have a similar relationship.
+I was able to successfully establish relationship of **citric.acid**, **sulphates**, and **volatile.acidity** with the quality of the wine.
+
+Citric acid, which adds freshness and flavour to wines, **increased its quality**.
+
+Sulphates, which add anti-microbial and anti-oxidant quality **increased the wine's quality** too.
+
+Volatile acidity, which adds an unpleasant vinegar taste, **decreased the wine's quality**.
+
+Also, I was able to successfully establish a relationship between pH and fixed acidity, pertaining to the science of acids.
+
+**Chlorides(sodium chloride) increased the density of the wine**, which should be the case.
+
+I was surprised that **residual sugar didn't have much effect on quality**, as the residual sugar can alter the sweetness of the wine, which in turn should have been a factor in determining the quality of the wine.
+
+One limitation of the dataset is that there are **very few observations** of wines with quality **3** and **8**. More data with these quality levels could improve our predictive model.
