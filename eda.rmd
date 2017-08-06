@@ -514,7 +514,7 @@ ggplot(redwine,
 Volatile acidity has a negative effect on quality i.e. the quality decreases with increase in volatile acidity(acetic acid).
 This may be due to the fact that acetic acid has a pungent smell and more acetic acid leads to increase in pungent smell, which leads to thw wine being evaluated as of low quality.
 
-## Reflections
+## Reflection
 
 I started with exploring the individual variables. I was surprised that outliers were present in the positive direction for variables such as **citric.acid**, **fixed.acidity**, **free.sulphur.dioxide**, **total.sulfur.dioxide**, **sulphates**, **chlorides**, **residual.sugar**.
 High number of observations had quality **5** and **6** in the dataset, the case being opposite for levels **3** and **8**
